@@ -7,8 +7,7 @@ var NUTRITION_PROGRAM = '03-2 Nutrition Acute Malnutrition';
 var FAMILYPLANNING_PROGRAM = '07 Family Planning Program';
 var logUrl = '/dhis-integration/log';
 var fiscalYearReportUrl = '/dhis-integration/download/fiscal-year-report?name=NAME&startYear=START_YEAR&startMonth=START_MONTH&endYear=END_YEAR&endMonth=END_MONTH&isImam=IS_IMAM';
-// var supportedStartDate = 2033; //
-var supportedStartDate = new Date().getFullYear()
+var supportedStartDate = 2033;
 var supportedEndDate = 2008;
 var approximateNepaliYear = (new Date()).getFullYear() + 56;
 var spinner = spinner || {};
@@ -276,9 +275,6 @@ function downloadCommon(url) {
 
 function submit(index, attribute) {
 	spinner.show();
-	alert("[submit] Welcome to the submit function...");
-	alert("index: "+index)
-	alert("Attribute: "+attribute)
 	var year = element('year', index).val();
 	var month = element('month', index).val();
 	var programName = element('program-name', index).html();
@@ -297,7 +293,7 @@ function submit(index, attribute) {
 
 	disableBtn(element('submit', index));
 	var submitTo = submitUrl;
-
+	//alert("[submit] Welcome to the submit function...");
 	if (attribute == true) {
 		alert("attribute == true, submitTo = submitUrlAtr");
 		submitTo = submitUrlAtr;

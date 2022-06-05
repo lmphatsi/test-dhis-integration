@@ -96,20 +96,18 @@ public class DHISIntegrator {
 		logger.info("Inside isLoggedIn");
 		return "Logged in";
 	}
-	
+
 	@RequestMapping(path = "/hasReportingPrivilege")
 	public Boolean hasReportSubmissionPrivilege(HttpServletRequest request, HttpServletResponse response) {
-    	return dHISClient.hasDhisSubmitPrivilege(request, response);
-    }
+		return dHISClient.hasDhisSubmitPrivilege(request, response);
+	}
 
 	public void prepareImamReport(Integer year, Integer month) throws JSONException {
 		logger.info("Inside prepareImamReport method");
 
-
 		JSONObject dhisConfig = (JSONObject) getDHISConfig(IMAM_PROGRAM_NAME);
 		String orgUnit = (String) dhisConfig.get("orgUnit");
 		String imamDataSetId = (String) dhisConfig.get("dataSetIdImam");
-
 
 		Integer prevMonth;
 		if (month == 1) {
@@ -176,7 +174,8 @@ public class DHISIntegrator {
 	@RequestMapping(path = "/submit-to-dhis")
 	public String submitToDHIS(@RequestParam("name") String program, @RequestParam("year") Integer year,
 			@RequestParam("month") Integer month, @RequestParam("comment") String comment,
-			@RequestParam("isImam") Boolean isImam,@RequestParam("isFamily") Boolean isFamily,HttpServletRequest clientReq, HttpServletResponse clientRes)
+			@RequestParam("isImam") Boolean isImam, @RequestParam("isFamily") Boolean isFamily,
+			HttpServletRequest clientReq, HttpServletResponse clientRes)
 			throws IOException, JSONException {
 		String userName = new Cookies(clientReq).getValue(BAHMNI_USER);
 		Submission submission = new Submission();
@@ -189,10 +188,10 @@ public class DHISIntegrator {
 			if (isFamily != null && isFamily) {
 				prepareFamilyPlanningReport(year, month);
 			}
-			
+
 			submitToDHIS(submission, program, year, month);
 			status = submission.getStatus();
-			
+
 			if (isImam != null && isImam)
 				databaseDriver.dropImamTable();
 		} catch (DHISIntegratorException | JSONException e) {
@@ -211,7 +210,7 @@ public class DHISIntegrator {
 
 		return submission.getInfo();
 	}
-	
+
 	@RequestMapping(path = "/submit-to-dhis_report_status")
 	public String submitToDHISLOG(@RequestParam("name") String program, @RequestParam("year") Integer year,
 			@RequestParam("month") Integer month, @RequestParam("comment") String comment, HttpServletRequest clientReq,
@@ -329,10 +328,11 @@ public class DHISIntegrator {
 				.getJSONObject(0); // TODO: why always 0 ?
 
 		JSONObject dhisConfig = getDHISConfig(name);
-		int lastDay=30;//TODO: Generalise 
-		DateTime startDate = new DateTime(year, month, 1,0,0);
-		DateTime endDate = new DateTime(year, month, lastDay,0,0);
-		ReportDateRange dateRange = new ReportDateRange(startDate,endDate);//DateConverter().getDateRange(year, month);
+		int lastDay = 30;// TODO: Generalise
+		DateTime startDate = new DateTime(year, month, 1, 0, 0);
+		DateTime endDate = new DateTime(year, month, lastDay, 0, 0);
+		ReportDateRange dateRange = new ReportDateRange(startDate, endDate);// DateConverter().getDateRange(year,
+																			// month);
 		List<Object> programDataValue = getProgramDataValuesAttrOptCombo(row, childReport,
 				dhisConfig.getJSONObject("reports"), dateRange);
 
@@ -407,6 +407,18 @@ public class DHISIntegrator {
 		}
 	}
 
+	private Boolean isLeapYear(Integer year) {
+		if (year % 400 == 0) {
+			return true;
+		} else if (year % 100 == 0) {
+			return false;
+		} else if (year % 4 == 0) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
 	private Submission submitToDHIS(Submission submission, String name, Integer year, Integer month)
 			throws DHISIntegratorException, JSONException, IOException {
 		JSONObject reportConfig = getConfig(properties.reportsJson);
@@ -430,11 +442,20 @@ public class DHISIntegrator {
 		}
 
 		JSONObject dhisConfig = getDHISConfig(name);
-		//ReportDateRange dateRange = new DateConverter().getDateRange(year, month);
-		int lastDay=30;//TODO: Generalise 
-		DateTime startDate = new DateTime(year, month, 1,0,0);
-		DateTime endDate = new DateTime(year, month, lastDay,0,0);
-		ReportDateRange dateRange = new ReportDateRange(startDate,endDate);//DateConverter().getDateRange(year, month);
+		// ReportDateRange dateRange = new DateConverter().getDateRange(year, month);
+		int lastDay = 30;// TODO: Generalise
+
+		if (month == 2) {
+			if (isLeapYear(year)) {
+				lastDay = 29;
+			}
+			lastDay = 28;
+		}
+
+		DateTime startDate = new DateTime(year, month, 1, 0, 0);
+		DateTime endDate = new DateTime(year, month, lastDay, 0, 0);
+		ReportDateRange dateRange = new ReportDateRange(startDate, endDate);// DateConverter().getDateRange(year,
+																			// month);
 		List<Object> programDataValue = getProgramDataValues(childReports, dhisConfig.getJSONObject("reports"),
 				dateRange);
 
@@ -539,11 +560,9 @@ public class DHISIntegrator {
 	public void prepareFamilyPlanningReport(Integer year, Integer month) throws JSONException {
 		logger.info("Inside prepareFamilyPlanningReport method");
 
-
 		JSONObject dhisConfig = (JSONObject) getDHISConfig(FamilyPlanning_PROGRAM_NAME);
 		String orgUnit = (String) dhisConfig.get("orgUnit");
 		String familyPlanningDataSetId = (String) dhisConfig.get("dataSetIdFamily");
-
 
 		Integer prevMonth;
 		if (month == 1) {

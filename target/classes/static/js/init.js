@@ -238,10 +238,11 @@ function putStatusRefresh(data, index) {
 	Mustache.parse(template);
 	data.message = JSON.stringify(data.exception || data.response);
 	element('status', index).html(Mustache.render(template, reportStatus));
-	/*element('status', index).find('.status-failure').on('click', function() {
+	//These lines were commented out
+	element('status', index).find('.status-failure').on('click', function() {
 		alert(data.message);
 		console.log(data.message);
-	});*/
+	});
 }
 
 function download(index) {
@@ -410,10 +411,10 @@ function getStatus(index) {
 	$.get(logUrl, parameters).done(function(data) {
 		
 		data = JSON.parse(data);
-		alert("[getStatus] Status data retrieved from logUrl...displaying data after json parsing...data.stringify()");
-		alert(JSON.stringify(data));
-		alert("[getStatus] Status data retrieved from logUrl...displaying data after json parsing...data.status");
-		alert(data.status);
+		//alert("[getStatus] Status data retrieved from logUrl...displaying data after json parsing...data.stringify()");
+		//alert(JSON.stringify(data));
+		//alert("[getStatus] Status data retrieved from logUrl...displaying data after json parsing...data.status");
+		//alert(data.status);
 		if ($.isEmptyObject(data)) {
 			element('comment', index).html('');
 			element('status', index).html('');

@@ -307,10 +307,10 @@ function submit(index, attribute) {
 	}
 	$.get(submitTo, parameters).done(function(data) {
 		data = JSON.parse(data)
-		//alert("[submit] Submitted...displaying the feedback...data.stringify()");
-		//alert(JSON.stringify(data));
-		//alert("[submit] Submitted...displaying the feedback...data.status");
-		//alert(data.status);
+		alert("[submit] Submitted...displaying the feedback...data.stringify()");
+		alert(JSON.stringify(data));
+		alert("[submit] Submitted...displaying the feedback...data.status");
+		alert(data.status);
 		if (!$.isEmptyObject(data)) {
 			
 			putStatus(data, index);

@@ -392,6 +392,9 @@ function autoSubmit(year,month,programName,comment) {
 
 function confirmAndSubmit(index, attribute) {
 	if (confirm("This action cannot be reversed. Are you sure, you want to submit?")) {
+		alert("[confirmAndSubmit function]...");
+		alert(JSON.stringify(index));
+		alert(JSON.stringify(attribute));
 		submit(index, attribute);
 	}
 }

@@ -467,11 +467,11 @@ public class DHISIntegrator {
 		ResponseEntity<String> responseEntity = dHISClient.post(SUBMISSION_ENDPOINT, programDataValueSet);
 		submission.setPostedData(programDataValueSet);
 		submission.setResponse(responseEntity);
-		//===============tracing
-		logger.info("Inside private submitToDHIS method")
-		logger.info("programDataValueSet: "+programDataValueSet.toString());
-		logger.info("responseEntity: "+responseEntity.toString());
-		//=========================================
+		// ===============tracing
+		logger.info("Inside private submitToDHIS method");
+		logger.info("programDataValueSet: " + programDataValueSet.toString());
+		logger.info("responseEntity: " + responseEntity.toString());
+		// =========================================
 		return submission;
 	}
 

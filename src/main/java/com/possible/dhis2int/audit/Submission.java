@@ -96,7 +96,8 @@ public class Submission {
 	}
 
 	private boolean hasConflicts(JSONObject responseBody) {
-		return responseBody.has("conflicts");
+		// return responseBody.has("conflicts");
+		return responseBody.getJSONArray("conflicts").length() > 0;
 	}
 
 	private boolean isIgnored(JSONObject responseBody) throws JSONException {

@@ -74,10 +74,6 @@ public class Submission {
 			return Status.Failure;
 		}
 		if (isServerError(responseBody) || isIgnored(responseBody) || hasConflicts(responseBody)) {
-			System.out.println("Well, status is not FULLy successful");
-			System.out.println("isServerError: " + isServerError(responseBody));
-			System.out.println("isIgnored: " + isIgnored(responseBody));
-			System.out.println("hasConflicts: " + hasConflicts(responseBody));
 			return Status.Failure;
 		}
 		return Status.Success;

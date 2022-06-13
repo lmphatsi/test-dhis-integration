@@ -191,6 +191,8 @@ public class DHISIntegrator {
 
 			submitToDHIS(submission, program, year, month);
 			status = submission.getStatus();
+			// tracing
+			logger.info("Status after submission: " + status.toString());
 
 			if (isImam != null && isImam)
 				databaseDriver.dropImamTable();
@@ -206,6 +208,8 @@ public class DHISIntegrator {
 
 		submittedDataStore.write(submission);
 		submissionLog.log(program, userName, comment, status, filePath);
+		// tracing
+		logger.info("Status after Exceptions block: " + status.toString());
 		recordLog(userName, program, year, month, submission.getInfo(), status, comment);
 
 		return submission.getInfo();

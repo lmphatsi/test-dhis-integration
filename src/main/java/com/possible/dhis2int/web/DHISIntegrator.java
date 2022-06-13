@@ -191,8 +191,6 @@ public class DHISIntegrator {
 
 			submitToDHIS(submission, program, year, month);
 			status = submission.getStatus();
-			// tracing
-			logger.info("Status after submission: " + status.toString());
 
 			if (isImam != null && isImam)
 				databaseDriver.dropImamTable();

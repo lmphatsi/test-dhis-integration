@@ -65,18 +65,19 @@ public class Submission {
 
 	public Status getStatus() throws JSONException {
 		if (response == null || response.getStatusCodeValue() != 200) {
-			System.out.println("Response is NULL or COde is not 200");
 			return Status.Failure;
 		}
 		JSONObject responseBody;
 		try {
 			responseBody = new JSONObject(new JSONTokener(response.getBody()));
 		} catch (JSONException e) {
-			System.out.println("JSON Exception");
 			return Status.Failure;
 		}
 		if (isServerError(responseBody) || isIgnored(responseBody) || hasConflicts(responseBody)) {
 			System.out.println("Well, status is not FULLy successful");
+			System.out.println("isServerError: " + isServerError(responseBody));
+			System.out.println("isIgnored: " + isIgnored(responseBody));
+			System.out.println("hasConflicts: " + hasConflicts(responseBody));
 			return Status.Failure;
 		}
 		return Status.Success;

@@ -301,7 +301,7 @@ function submit(index, attribute) {
 
 	disableBtn(element('submit', index));
 	var submitTo = submitUrl;
-	//alert("[submit] Welcome to the submit function...");
+	alert("[submit] Welcome to the submit function..."+submitTo);
 	if (attribute == true) {
 		alert("attribute == true, submitTo = submitUrlAtr");
 		submitTo = submitUrlAtr;

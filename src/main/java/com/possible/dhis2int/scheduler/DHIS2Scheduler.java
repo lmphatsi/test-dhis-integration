@@ -48,8 +48,8 @@ public class DHIS2Scheduler {
 		logger.info("Executing schedule at :" + new Date().toString());
 		String dhisIntegrationUrl = "http://localhost:8040/dhis-integration";
 		String endpointUrl = "/submit-to-dhis";
-		String month = "06";
-		String year = "2021";
+		Integer month = 6;
+		Integer year = 2021;
 		String reportName = "TESTS-01 DHIS Integration App Sync Test";
 
 		JSONObject jsonObject = new JSONObject();

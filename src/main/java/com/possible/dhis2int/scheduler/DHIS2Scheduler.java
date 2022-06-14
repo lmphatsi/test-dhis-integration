@@ -3,6 +3,7 @@ package com.possible.dhis2int.scheduler;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -14,19 +15,24 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import com.possible.dhis2int.openmrs.OpenMRSAuthenticator;
 import com.possible.dhis2int.web.RestTemplateFactory;
 
 import java.util.Date;
 
-@Component
+@Service
 public class DHIS2Scheduler {
 
 	Logger logger = LoggerFactory.getLogger(DHIS2Scheduler.class);
 
 	private RestTemplateFactory restTemplateFactory;
 
-	DHIS2Scheduler(RestTemplateFactory restTemplateFactory) {
+	private OpenMRSAuthenticator authenticator;
+
+	@Autowired
+	DHIS2Scheduler(RestTemplateFactory restTemplateFactory, OpenMRSAuthenticator authenticator) {
 		this.restTemplateFactory = restTemplateFactory;
+		this.authenticator = authenticator;
 	}
 
 	private void submitToDHIS(String programmeName, Integer year, Integer month) {

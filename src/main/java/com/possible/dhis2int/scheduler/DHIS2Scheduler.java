@@ -41,13 +41,13 @@ public class DHIS2Scheduler {
 
 	}
 
-	@Scheduled(fixedDelay = 5000)
+	@Scheduled(fixedDelay = 30000)
 	public void processSchedules() {
 		// read from table
 		// for each row, is this report due
 		// if due => call submitToDHIS(x,y,z)
 		logger.info("Executing schedule at :" + new Date().toString());
-		String dhisIntegrationUrl = "https://1d4238570c13/dhis-integration";
+		String dhisIntegrationUrl = "http://localhost/dhis-integration";
 		String endpointUrl = "/submit-to-dhis";
 		Integer month = 6;
 		Integer year = 2021;

@@ -14,28 +14,29 @@ import com.possible.dhis2int.Properties;
 
 @Service
 public class OpenmrsClient {
-	
+
 	private static final Logger logger = Logger.getLogger(OpenmrsClient.class);
-	
+
 	private Properties properties;
-	
+
 	@Autowired
 	public OpenmrsClient(Properties properties) {
 		this.properties = properties;
 	}
-	
+
 	public <T> ResponseEntity<T> get(String sessionId, String url, Class<T> returnType) {
 		HttpHeaders requestHeaders = new HttpHeaders();
+
 		requestHeaders.add("Cookie", OpenMRSAuthenticator.OPENMRS_SESSION_ID_COOKIE_NAME + "=" + sessionId);
+		// tracing
+		logger.info("RequestHeader: " + requestHeaders.toString());
 		try {
 			return new RestTemplate()
 					.exchange(properties.openmrsRootUrl + url,
 							HttpMethod.GET,
 							new HttpEntity<>(null, requestHeaders),
-							returnType
-					);
-		}
-		catch (HttpClientErrorException exception) {
+							returnType);
+		} catch (HttpClientErrorException exception) {
 			logger.warn("Could not authenticate with OpenMRS", exception);
 			return new ResponseEntity<>(exception.getStatusCode());
 		}

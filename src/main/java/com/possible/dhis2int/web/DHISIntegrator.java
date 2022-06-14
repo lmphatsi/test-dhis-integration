@@ -206,8 +206,7 @@ public class DHISIntegrator {
 
 		submittedDataStore.write(submission);
 		submissionLog.log(program, userName, comment, status, filePath);
-		// tracing
-		logger.info("Status after Exceptions block: " + status.toString());
+
 		recordLog(userName, program, year, month, submission.getInfo(), status, comment);
 
 		return submission.getInfo();
@@ -470,10 +469,12 @@ public class DHISIntegrator {
 		submission.setPostedData(programDataValueSet);
 		submission.setResponse(responseEntity);
 		// ===============tracing
-		logger.info("Inside private submitToDHIS method");
-		logger.info("programDataValueSet: " + programDataValueSet.toString());
-		logger.info("responseEntity: " + responseEntity.toString());
-		logger.info("status code: " + responseEntity.getStatusCode());
+		/*
+		 * logger.info("Inside private submitToDHIS method");
+		 * logger.info("programDataValueSet: " + programDataValueSet.toString());
+		 * logger.info("responseEntity: " + responseEntity.toString());
+		 * logger.info("status code: " + responseEntity.getStatusCode());
+		 */
 		// =========================================
 		return submission;
 	}

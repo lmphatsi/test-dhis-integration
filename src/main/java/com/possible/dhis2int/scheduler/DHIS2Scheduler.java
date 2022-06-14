@@ -40,7 +40,7 @@ public class DHIS2Scheduler {
 		// for each row, is this report due
 		// if due => call submitToDHIS(x,y,z)
 		logger.info("Executing schedule at :" + new Date().toString());
-		String dhisIntegrationUrl = "http://localhost:8040";
+		String dhisIntegrationUrl = "http://localhost:8040/dhis-integration";
 		String endpointUrl = "/submit-to-dhis";
 		String month = "06";
 		String year = "2021";

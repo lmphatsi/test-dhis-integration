@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import com.possible.dhis2int.openmrs.OpenMRSAuthenticator;
@@ -60,10 +61,16 @@ public class DHIS2Scheduler {
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);
 		HttpEntity<String> entity = new HttpEntity<>(jsonObject.toString(), headers);
-		ResponseEntity<String> responseEntity = restTemplateFactory.getRestTemplate().exchange(
-				dhisIntegrationUrl + endpointUrl, HttpMethod.POST, entity,
-				String.class);
-		logger.info("responseEntity: " + responseEntity.toString());
-		logger.info("status code: " + responseEntity.getStatusCode());
+		logger.info("URL: " + dhisIntegrationUrl + endpointUrl);
+		logger.info("entity: " + entity.toString());
+		// logger.info("responseEntity: " + responseEntity.toString());
+		// logger.info("status code: " + responseEntity.getStatusCode());
+		try {
+			ResponseEntity<String> responseEntity = restTemplateFactory.getRestTemplate().exchange(
+					dhisIntegrationUrl + endpointUrl, HttpMethod.POST, entity,
+					String.class);
+		} catch (HttpClientErrorException exception) {
+			logger.warn("API call failed.", exception.getStatusCode());
+		}
 	}
 }

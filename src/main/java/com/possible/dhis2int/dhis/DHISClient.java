@@ -28,33 +28,35 @@ public class DHISClient {
 	private RestTemplateFactory restTemplateFactory;
 
 	private Properties properties;
-	
+
 	private OpenMRSAuthenticator authenticator;
-	
+
 	public static final Logger LOGGER = Logger.getLogger(DHISIntegrator.class);
 
 	@Autowired
-	public DHISClient(RestTemplateFactory restTemplateFactory, Properties properties, OpenMRSAuthenticator authenticator) {
+	public DHISClient(RestTemplateFactory restTemplateFactory, Properties properties,
+			OpenMRSAuthenticator authenticator) {
 		this.restTemplateFactory = restTemplateFactory;
 		this.properties = properties;
 		this.authenticator = authenticator;
 	}
-	
+
 	public boolean hasDhisSubmitPrivilege(HttpServletRequest request, HttpServletResponse response) {
-        Cookies cookies = new Cookies(request);
-        String cookie = cookies.getValue(Cookies.DHIS_INTEGRATION_COOKIE_NAME);
-        
-        AuthenticationResponse authenticationResponse = authenticator.authenticateReportSubmitingPrivilege(cookie);
-        switch (authenticationResponse) {
-            case SUBMIT_AUTHORIZED:
-            	return true;
-            case SUBMIT_UNAUTHORIZED:
-            	return false;
-            default:
-            	return false;
-        }
-    }
-	
+		Cookies cookies = new Cookies(request);
+		String cookie = cookies.getValue(Cookies.DHIS_INTEGRATION_COOKIE_NAME);
+		// tracing
+		System.out.println("Cookie value: " + cookie);
+		AuthenticationResponse authenticationResponse = authenticator.authenticateReportSubmitingPrivilege(cookie);
+		switch (authenticationResponse) {
+			case SUBMIT_AUTHORIZED:
+				return true;
+			case SUBMIT_UNAUTHORIZED:
+				return false;
+			default:
+				return false;
+		}
+	}
+
 	public ResponseEntity<String> post(String url, JSONObject jsonObject) {
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);
@@ -69,6 +71,7 @@ public class DHISClient {
 		headers.setContentType(MediaType.APPLICATION_JSON);
 		HttpEntity<String> entity = new HttpEntity<>(new JSONObject().toString(), headers);
 		System.out.println(properties.dhisUrl + url);
-		return restTemplateFactory.getRestTemplate().exchange(properties.dhisUrl + url, HttpMethod.GET, entity, String.class);
+		return restTemplateFactory.getRestTemplate().exchange(properties.dhisUrl + url, HttpMethod.GET, entity,
+				String.class);
 	}
 }

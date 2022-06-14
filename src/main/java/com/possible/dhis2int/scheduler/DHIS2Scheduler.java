@@ -66,9 +66,9 @@ public class DHIS2Scheduler {
 		// logger.info("responseEntity: " + responseEntity.toString());
 		// logger.info("status code: " + responseEntity.getStatusCode());
 		try {
-			ResponseEntity<String> responseEntity = restTemplateFactory.getRestTemplate().exchange(
-					dhisIntegrationUrl + endpointUrl, HttpMethod.POST, entity,
-					String.class);
+			ResponseEntity<String> responseEntity = restTemplateFactory.getRestTemplate()
+					.exchange(dhisIntegrationUrl + endpointUrl, HttpMethod.POST, entity, String.class);
+			logger.info("responseEntity: " + responseEntity.toString());
 		} catch (HttpClientErrorException exception) {
 			logger.warn("API call failed.", exception.getStatusCode());
 		}

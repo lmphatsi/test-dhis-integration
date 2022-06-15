@@ -71,6 +71,7 @@ public class DHIS2Scheduler {
 		String toEncode = username + ":" + password;
 		String encodedAuth = Base64.getEncoder().encodeToString(toEncode.getBytes());
 		String openmrsLoginEndpoint = "http://localhost/openmrs/ws/rest/v1/session";
+		String openmrsWhoAmIEndpoint = "http://localhost/openmrs/ws/rest/v1/bahmnicore/whoami";
 
 		String sessionId = "";
 
@@ -80,10 +81,15 @@ public class DHIS2Scheduler {
 			authHeaders.add("Authorization", "BASIC " + encodedAuth);
 			ResponseEntity<String> responseEntity1 = new RestTemplate().exchange(openmrsLoginEndpoint,
 					HttpMethod.GET, new HttpEntity<String>(authHeaders), String.class);
-			logger.info("Openmrs get session response: " + responseEntity1.toString());
-			logger.info("Response headers: " + responseEntity1.getHeaders().toString());
+			// logger.info("Openmrs get session response: " + responseEntity1.toString());
+			// logger.info("Response headers: " + responseEntity1.getHeaders().toString());
 			sessionId = new JSONObject(new JSONTokener(responseEntity1.getBody())).getString("sessionId");
-			logger.info("session id: " + sessionId);
+
+			authHeaders.add("Cookie", "JSESSIONID" + sessionId);
+			responseEntity1 = new RestTemplate().exchange(openmrsWhoAmIEndpoint, HttpMethod.GET,
+					new HttpEntity<String>(authHeaders), String.class);
+			// logger.info("session id: " + sessionId);
+			logger.info("Response headers: " + responseEntity1.getHeaders().toString());
 		} catch (HttpClientErrorException exception) {
 			logger.warn("Could not authenticate with OpenMRS.", exception.getStatusCode());
 		}

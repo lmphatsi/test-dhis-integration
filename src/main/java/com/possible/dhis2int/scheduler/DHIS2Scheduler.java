@@ -95,7 +95,7 @@ public class DHIS2Scheduler {
 		}
 
 		HttpHeaders headers = new HttpHeaders();
-		headers.add("reporting_session", sessionId);
+		headers.add("JSESSIONID", sessionId);
 		headers.add("reporting_session", sessionId);
 		headers.setContentType(MediaType.APPLICATION_JSON);
 		HttpEntity<String> entity = new HttpEntity<>(jsonObject.toString(), headers);

@@ -22,9 +22,7 @@ public class OpenMRSAuthenticator {
 
 	public AuthenticationResponse authenticate(String sessionId) {
 		if (sessionId == null) {
-			// return AuthenticationResponse.NOT_AUTHENTICATED;
-			// hack -- test
-			return AuthenticationResponse.SUBMIT_AUTHORIZED;
+			return AuthenticationResponse.NOT_AUTHENTICATED;
 		}
 		ResponseEntity<Privileges> response = openmrsClient.get(sessionId, WHOAMI_URL, Privileges.class);
 		HttpStatus status = response.getStatusCode();
@@ -39,8 +37,6 @@ public class OpenMRSAuthenticator {
 
 	public AuthenticationResponse authenticateReportSubmitingPrivilege(String sessionId) {
 		if (sessionId == null) {
-			// return AuthenticationResponse.NOT_AUTHENTICATED;
-			// hack -- test
 			return AuthenticationResponse.SUBMIT_AUTHORIZED;
 		}
 		ResponseEntity<Privileges> response = openmrsClient.get(sessionId, WHOAMI_URL, Privileges.class);

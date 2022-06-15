@@ -43,7 +43,6 @@ public class AuthenticationFilter extends HandlerInterceptorAdapter {
 				: authenticator.authenticate(cookie);
 		// tracing
 		System.out.println("Prehandle method - authenticationResponse " + authenticationResponse.toString());
-		System.out.println("Prehandle method - request " + request.toString());
 
 		switch (authenticationResponse) {
 			case AUTHORIZED:

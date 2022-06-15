@@ -7,7 +7,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication
 @ComponentScan("com.possible.dhis2int")
-// @EnableScheduling
+@EnableScheduling
 public class Application {
 	public static void main(String[] args) throws ClassNotFoundException {
 		Class.forName("com.mysql.jdbc.Driver");

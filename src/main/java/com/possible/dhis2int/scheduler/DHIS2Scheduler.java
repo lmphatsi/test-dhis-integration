@@ -106,7 +106,7 @@ public class DHIS2Scheduler {
 		headers.add("Cookie", "JSESSIONID=" + sessionId);
 		headers.add("Cookie", "reporting_session=" + sessionId);
 		headers.add("Cookie", "bahmni.user=" + sessionUser);
-		// headers.setContentType(MediaType.APPLICATION_JSON);
+		headers.setContentType(MediaType.APPLICATION_JSON);
 		HttpEntity<String> entity = new HttpEntity<>(jsonObject.toString(), headers);
 
 		try {

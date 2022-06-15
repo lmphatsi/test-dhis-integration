@@ -77,7 +77,7 @@ public class DHIS2Scheduler {
 		// Get openmrs jsessionid
 		try {
 			HttpHeaders authHeaders = new HttpHeaders();
-			authHeaders.add("Authorization", encodedAuth);
+			authHeaders.add("Authorization", "BASIC " + encodedAuth);
 			ResponseEntity<String> responseEntity1 = new RestTemplate().exchange(openmrsLoginEndpoint,
 					HttpMethod.GET, new HttpEntity<String>(authHeaders), String.class);
 			logger.info("Openmrs get session response: " + responseEntity1.toString());

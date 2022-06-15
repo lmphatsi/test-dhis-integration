@@ -80,6 +80,8 @@ public class DHIS2Scheduler {
 			authHeaders.add("Authorization", encodedAuth);
 			ResponseEntity<String> responseEntity1 = new RestTemplate().exchange(openmrsLoginEndpoint,
 					HttpMethod.GET, new HttpEntity<String>(authHeaders), String.class);
+			logger.info("Openmrs get session response: " + responseEntity1.toString());
+			logger.info("Response headers: " + responseEntity1.getHeaders().toString());
 			sessionId = new JSONObject(new JSONTokener(responseEntity1.getBody())).getString("sessionId");
 			logger.info("session id: " + sessionId);
 		} catch (HttpClientErrorException exception) {
@@ -87,6 +89,7 @@ public class DHIS2Scheduler {
 		}
 
 		HttpHeaders headers = new HttpHeaders();
+		headers.add("reporting_session", sessionId);
 		headers.add("reporting_session", sessionId);
 		headers.setContentType(MediaType.APPLICATION_JSON);
 		HttpEntity<String> entity = new HttpEntity<>(jsonObject.toString(), headers);

@@ -470,10 +470,10 @@ public class DHISIntegrator {
 		submission.setResponse(responseEntity);
 		// ===============tracing
 
-		// logger.info("Inside private submitToDHIS method");
-		// logger.info("programDataValueSet: " + programDataValueSet.toString());
-		// logger.info("responseEntity: " + responseEntity.toString());
-		// logger.info("status code: " + responseEntity.getStatusCode());
+		logger.info("Inside private submitToDHIS method");
+		logger.info("programDataValueSet: " + programDataValueSet.toString());
+		logger.info("responseEntity: " + responseEntity.toString());
+		logger.info("status code: " + responseEntity.getStatusCode());
 
 		// =========================================
 		return submission;

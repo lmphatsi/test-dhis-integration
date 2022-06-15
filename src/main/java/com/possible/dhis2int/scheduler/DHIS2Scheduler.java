@@ -72,7 +72,7 @@ public class DHIS2Scheduler {
 		String encodedAuth = Base64.getEncoder().encodeToString(toEncode.getBytes());
 		String openmrsLoginEndpoint = "http://localhost/openmrs/ws/rest/v1/session";
 
-		String sessionId;
+		String sessionId = "";
 
 		// Get openmrs jsessionid
 		try {
@@ -87,6 +87,7 @@ public class DHIS2Scheduler {
 		}
 
 		HttpHeaders headers = new HttpHeaders();
+		headers.add("reporting_session", sessionId);
 		headers.setContentType(MediaType.APPLICATION_JSON);
 		HttpEntity<String> entity = new HttpEntity<>(jsonObject.toString(), headers);
 

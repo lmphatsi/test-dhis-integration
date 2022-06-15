@@ -1,6 +1,7 @@
 package com.possible.dhis2int.scheduler;
 
 import org.json.JSONObject;
+import org.json.JSONTokener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,23 +17,26 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
+import com.possible.dhis2int.Properties;
 import com.possible.dhis2int.openmrs.OpenMRSAuthenticator;
 import com.possible.dhis2int.web.RestTemplateFactory;
 
+import java.util.Base64;
 import java.util.Date;
+import java.util.List;
 
 @Service
 public class DHIS2Scheduler {
 
-	Logger logger = LoggerFactory.getLogger(DHIS2Scheduler.class);
-
-	private RestTemplateFactory restTemplateFactory;
+	private static final Logger logger = LoggerFactory.getLogger(DHIS2Scheduler.class);
 
 	private OpenMRSAuthenticator authenticator;
 
+	private final Properties properties;
+
 	@Autowired
-	DHIS2Scheduler(RestTemplateFactory restTemplateFactory, OpenMRSAuthenticator authenticator) {
-		this.restTemplateFactory = restTemplateFactory;
+	DHIS2Scheduler(Properties properties, OpenMRSAuthenticator authenticator) {
+		this.properties = properties;
 		this.authenticator = authenticator;
 	}
 
@@ -62,13 +66,30 @@ public class DHIS2Scheduler {
 		jsonObject.put("isFamily", isFamily);
 		jsonObject.put("isImam", isImam);
 
+		String username = "jstesting";
+		String password = "Password123";
+		String toEncode = username + ":" + password;
+		String encodedAuth = Base64.getEncoder().encodeToString(toEncode.getBytes());
+		String openmrsLoginEndpoint = "http://localhost/openmrs/ws/rest/v1/session";
+
+		String sessionId;
+
+		// Get openmrs jsessionid
+		try {
+			HttpHeaders authHeaders = new HttpHeaders();
+			authHeaders.add("Authorization", encodedAuth);
+			ResponseEntity<String> responseEntity1 = new RestTemplate().exchange(openmrsLoginEndpoint,
+					HttpMethod.GET, new HttpEntity<String>(authHeaders), String.class);
+			sessionId = new JSONObject(new JSONTokener(responseEntity1.getBody())).getString("sessionId");
+			logger.info("session id: " + sessionId);
+		} catch (HttpClientErrorException exception) {
+			logger.warn("Could not authenticate with OpenMRS.", exception.getStatusCode());
+		}
+
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);
 		HttpEntity<String> entity = new HttpEntity<>(jsonObject.toString(), headers);
-		logger.info("URL: " + dhisIntegrationUrl + endpointUrl);
-		logger.info("entity: " + entity.toString());
-		// logger.info("responseEntity: " + responseEntity.toString());
-		// logger.info("status code: " + responseEntity.getStatusCode());
+
 		try {
 			ResponseEntity<String> responseEntity = new RestTemplate().exchange(dhisIntegrationUrl + endpointUrl,
 					HttpMethod.GET, entity, String.class);

@@ -88,7 +88,8 @@ public class DHIS2Scheduler {
 			// logger.info("Openmrs get session response: " + responseEntity1.toString());
 			// logger.info("Response headers: " + responseEntity1.getHeaders().toString());
 			sessionId = new JSONObject(new JSONTokener(responseEntity1.getBody())).getString("sessionId");
-			sessionUser = new JSONObject(new JSONTokener(responseEntity1.getBody())).getJSONObject("user").getString("username");
+			sessionUser = new JSONObject(new JSONTokener(responseEntity1.getBody())).getJSONObject("user")
+					.getString("username");
 
 			authHeaders.add("Cookie", "JSESSIONID=" + sessionId);
 			responseEntity1 = new RestTemplate().exchange(openmrsWhoAmIEndpoint, HttpMethod.GET,
@@ -104,7 +105,7 @@ public class DHIS2Scheduler {
 		HttpHeaders headers = new HttpHeaders();
 		headers.add("Cookie", "JSESSIONID=" + sessionId);
 		headers.add("Cookie", "reporting_session=" + sessionId);
-		headers.add("Cookie", "bahmni.user=" + sessionUser)
+		headers.add("Cookie", "bahmni.user=" + sessionUser);
 		// headers.setContentType(MediaType.APPLICATION_JSON);
 		HttpEntity<String> entity = new HttpEntity<>(jsonObject.toString(), headers);
 

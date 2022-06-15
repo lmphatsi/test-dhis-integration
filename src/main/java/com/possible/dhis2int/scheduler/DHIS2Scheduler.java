@@ -50,13 +50,17 @@ public class DHIS2Scheduler {
 		String dhisIntegrationUrl = "http://localhost/dhis-integration";
 		String endpointUrl = "/submit-to-dhis";
 		Integer month = 6;
-		Integer year = 2021;
+		Integer year = 2020;
 		String reportName = "TESTS-01 DHIS Integration App Sync Test";
+		Boolean isFamily = false;
+		Boolean isImam = false;
 
 		JSONObject jsonObject = new JSONObject();
 		jsonObject.put("name", reportName);
 		jsonObject.put("year", year);
 		jsonObject.put("month", month);
+		jsonObject.put("isFamily", isFamily);
+		jsonObject.put("isImam", isImam);
 
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);

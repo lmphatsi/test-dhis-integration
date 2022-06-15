@@ -178,6 +178,7 @@ public class DHISIntegrator {
 			HttpServletRequest clientReq, HttpServletResponse clientRes)
 			throws IOException, JSONException {
 		String userName = new Cookies(clientReq).getValue(BAHMNI_USER);
+		System.out.println("Bahmni username :" + userName);
 		Submission submission = new Submission();
 		String filePath = submittedDataStore.getAbsolutePath(submission);
 		Status status;

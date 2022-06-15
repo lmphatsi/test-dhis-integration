@@ -66,8 +66,8 @@ public class DHIS2Scheduler {
 		jsonObject.put("isFamily", isFamily);
 		jsonObject.put("isImam", isImam);
 
-		String username = "jstesting";
-		String password = "Password123";
+		String username = "superman";
+		String password = "P@$$w0rd!";
 		String toEncode = username + ":" + password;
 		String encodedAuth = Base64.getEncoder().encodeToString(toEncode.getBytes());
 		String openmrsLoginEndpoint = "http://localhost/openmrs/ws/rest/v1/session";

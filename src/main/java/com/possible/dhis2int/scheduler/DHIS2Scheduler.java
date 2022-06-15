@@ -92,14 +92,16 @@ public class DHIS2Scheduler {
 			responseEntity1 = new RestTemplate().exchange(openmrsWhoAmIEndpoint, HttpMethod.GET,
 					new HttpEntity<String>(authHeaders), String.class);
 			// logger.info("session id: " + sessionId);
-			logger.info("Response headers: " + responseEntity1.getHeaders().toString());
+			// -- logger.info("Response headers: " +
+			// responseEntity1.getHeaders().toString());
 		} catch (HttpClientErrorException exception) {
 			logger.warn("Could not authenticate with OpenMRS.", exception.getStatusCode());
 		}
-		Cookie cookie = new Cookie("JSESSIONID", sessionId);
+
+		System.out.println("Session ID " + sessionId);
 		HttpHeaders headers = new HttpHeaders();
 		headers.add("Cookie", "JSESSIONID=" + sessionId);
-		headers.add("Cookie", "reporting_session" + sessionId);
+		headers.add("Cookie", "reporting_session=" + sessionId);
 		// headers.setContentType(MediaType.APPLICATION_JSON);
 		HttpEntity<String> entity = new HttpEntity<>(jsonObject.toString(), headers);
 

@@ -37,7 +37,7 @@ public class OpenMRSAuthenticator {
 
 	public AuthenticationResponse authenticateReportSubmitingPrivilege(String sessionId) {
 		if (sessionId == null) {
-			return AuthenticationResponse.SUBMIT_AUTHORIZED;
+			return AuthenticationResponse.NOT_AUTHENTICATED;
 		}
 		ResponseEntity<Privileges> response = openmrsClient.get(sessionId, WHOAMI_URL, Privileges.class);
 		HttpStatus status = response.getStatusCode();

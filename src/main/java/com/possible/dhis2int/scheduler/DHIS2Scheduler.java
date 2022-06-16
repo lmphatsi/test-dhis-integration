@@ -106,7 +106,7 @@ public class DHIS2Scheduler {
 		// headers.add("Cookie", "JSESSIONID=" + sessionId);
 		headers.add("Cookie", "reporting_session=" + sessionId);
 		headers.add("Cookie", "bahmni.user=" + sessionUser);
-		headers.setContentType(MediaType.APPLICATION_JSON);
+		// headers.setContentType(MediaType.APPLICATION_JSON);
 		HttpEntity<String> entity = new HttpEntity<>(jsonObject.toString(), headers);
 
 		try {
@@ -119,8 +119,9 @@ public class DHIS2Scheduler {
 			RestTemplateFactory restTemplateFactory = new RestTemplateFactory(properties);
 			ResponseEntity<String> responseEntity = restTemplateFactory.getRestTemplate().exchange(
 					dhisIntegrationUrl + endpointUrl,
-					HttpMethod.GET, entity, String.class);
+					HttpMethod.POST, entity, String.class);
 			logger.info("responseEntity: " + responseEntity.toString());
+
 		} catch (HttpClientErrorException exception) {
 			logger.warn("API call failed.", exception.getStatusCode());
 		}

@@ -101,18 +101,22 @@ public class DHIS2Scheduler {
 			logger.warn("Could not authenticate with OpenMRS.", exception.getStatusCode());
 		}
 
-		System.out.println("Session ID " + sessionId);
+		//System.out.println("Session ID " + sessionId);
 		HttpHeaders headers = new HttpHeaders();
-		headers.add("Cookie", "JSESSIONID=" + sessionId);
+		//headers.add("Cookie", "JSESSIONID=" + sessionId);
 		headers.add("Cookie", "reporting_session=" + sessionId);
 		headers.add("Cookie", "bahmni.user=" + sessionUser);
 		headers.setContentType(MediaType.APPLICATION_JSON);
 		HttpEntity<String> entity = new HttpEntity<>(jsonObject.toString(), headers);
 
 		try {
-			ResponseEntity<String> responseEntity = new RestTemplate().exchange(dhisIntegrationUrl + endpointUrl,
+			/*ResponseEntity<String> responseEntity = new RestTemplate().exchange(dhisIntegrationUrl + endpointUrl,
 					HttpMethod.GET, entity, String.class);
-			logger.info("responseEntity: " + responseEntity.toString());
+			logger.info("responseEntity: " + responseEntity.toString());*/
+			RestTemplateFactory restTemplateFactory = new RestTemplateFactory(properties);
+			ResponseEntity<String> responseEntity = restTemplateFactory.getRestTemplate().exchange(dhisIntegrationUrl + endpointUrl,
+			HttpMethod.GET, entity, String.class);
+			logger.info("responseEntity: " + responseEntity.toString())
 		} catch (HttpClientErrorException exception) {
 			logger.warn("API call failed.", exception.getStatusCode());
 		}

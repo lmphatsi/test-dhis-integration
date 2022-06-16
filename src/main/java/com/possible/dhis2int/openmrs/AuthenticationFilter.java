@@ -43,17 +43,21 @@ public class AuthenticationFilter extends HandlerInterceptorAdapter {
 				: authenticator.authenticate(cookie);
 		// tracing
 		System.out.println("Prehandle method - cookie " + cookie);
-		System.out.println("Prehandle method - request " + request.toString());
+		System.out.println("Prehandle method - requestEncoding " + request.getCharacterEncoding());
+		System.out.println("Prehandle method - authType " + request.getAuthType());
+		System.out.println("Prehandle method - contentType " + request.getContentType());
 		System.out.println("Prehandle method - authenticationResponse " + authenticationResponse.toString());
 
 		switch (authenticationResponse) {
 			case AUTHORIZED:
+				System.out.println(" Authorized Here!!!!!!! ********* ");
 				return true;
 			case UNAUTHORIZED:
 				response.sendError(HttpServletResponse.SC_FORBIDDEN,
 						"Privileges is required to access reports");
 				return false;
 			case SUBMIT_AUTHORIZED:
+				System.out.println(" Submit Authorized Here!!!!!!! ********* ");
 				return true;
 			case SUBMIT_UNAUTHORIZED:
 				response.sendError(HttpServletResponse.SC_FORBIDDEN,

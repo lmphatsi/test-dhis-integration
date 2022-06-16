@@ -112,14 +112,19 @@ public class DHIS2Scheduler {
 		HttpEntity<String> entity = new HttpEntity<>(jsonObject.toString(), headers);
 
 		try {
-			HttpEntity<String> entity1 = new HttpEntity<>("body", headers);
-			String urlEndpoint = "http://localhost/dhis-integration/submit-to-dhis?name=TESTS-01 DHIS Integration App Sync Test&month=6&year=2014&comment='Ola'&isImam=false&isFamily=false";
-			ResponseEntity<String> responseEntity = new RestTemplate().exchange(urlEndpoint, HttpMethod.GET, entity1,
-					String.class);
+			/* Working */
+			/*
+			 * HttpEntity<String> entity1 = new HttpEntity<>("body", headers);
+			 * String urlEndpoint =
+			 * "http://localhost/dhis-integration/submit-to-dhis?name=TESTS-01 DHIS Integration App Sync Test&month=6&year=2014&comment='Ola'&isImam=false&isFamily=false"
+			 * ;
+			 * ResponseEntity<String> responseEntity = new
+			 * RestTemplate().exchange(urlEndpoint, HttpMethod.POST, entity1,
+			 * String.class);
+			 */
 
-			// ResponseEntity<String> responseEntity = new
-			// RestTemplate().exchange(dhisIntegrationUrl + endpointUrl, HttpMethod.GET,
-			// entity, String.class);
+			ResponseEntity<String> responseEntity = new RestTemplate().exchange(dhisIntegrationUrl + endpointUrl,
+					HttpMethod.POST, entity, String.class);
 			logger.info("responseEntity: " + responseEntity.toString());
 
 			/*

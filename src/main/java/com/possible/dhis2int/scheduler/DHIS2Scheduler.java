@@ -23,7 +23,9 @@ import com.possible.dhis2int.web.RestTemplateFactory;
 
 import java.util.Base64;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.Cookie;
 import javax.swing.text.html.parser.Entity;
@@ -110,17 +112,19 @@ public class DHIS2Scheduler {
 		HttpEntity<String> entity = new HttpEntity<>(jsonObject.toString(), headers);
 
 		try {
+
 			/*
 			 * ResponseEntity<String> responseEntity = new
-			 * RestTemplate().exchange(dhisIntegrationUrl + endpointUrl,
-			 * HttpMethod.GET, entity, String.class);
+			 * RestTemplate().exchange(dhisIntegrationUrl + endpointUrl, HttpMethod.GET,
+			 * entity, String.class);
 			 * logger.info("responseEntity: " + responseEntity.toString());
 			 */
-			RestTemplateFactory restTemplateFactory = new RestTemplateFactory(properties);
-			ResponseEntity<String> responseEntity = restTemplateFactory.getRestTemplate().exchange(
-					dhisIntegrationUrl + endpointUrl,
-					HttpMethod.POST, entity, String.class);
-			logger.info("responseEntity: " + responseEntity.toString());
+			Map<String, Integer> vars = new HashMap<String, Integer>();
+			vars.put("year", 2016);
+			vars.put("month", 1);
+			String urlEndpoint = "http://localhost/dhis-integration/submit-to-dhis?name=TESTS-01 DHIS Integration App Sync Test&month={month}&year={year}&comment='Ola'&isImam=false&isFamily=false";
+			String result = new RestTemplate().getForObject(urlEndpoint, String.class, vars);
+			logger.info("result: " + result);
 
 		} catch (HttpClientErrorException exception) {
 			logger.warn("API call failed.", exception.getStatusCode());

@@ -36,6 +36,12 @@ public class Properties {
 	@Value("${dhis.user}")
 	public String dhisUser;
 
+	@Value("${daemon.password}")
+	public String openmrsDaemonPassword;
+
+	@Value("${daemon.user}")
+	public String openmrsDaemonUser;
+
 	@Value("${log4j.config.file}")
 	public String log4jConfigFile;
 

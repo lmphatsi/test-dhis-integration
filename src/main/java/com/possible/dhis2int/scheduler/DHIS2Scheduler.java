@@ -19,7 +19,6 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import com.possible.dhis2int.Properties;
-import com.possible.dhis2int.openmrs.OpenMRSAuthenticator;
 
 import java.nio.charset.Charset;
 import java.util.Date;
@@ -40,11 +39,6 @@ public class DHIS2Scheduler {
 		this.properties = properties;
 	}
 
-	private void submitToDHIS(String programmeName, Integer year, Integer month) {
-		System.out.println("Hello World!");
-
-	}
-
 	private String getAuthToken(String username, String password) {
 		Charset UTF_8 = Charset.forName("UTF-8");
 		String authToken = Base64Utils.encodeToString((username + ":" + password).getBytes(UTF_8));
@@ -53,7 +47,7 @@ public class DHIS2Scheduler {
 	}
 
 	private String buildDiaUrl(String reportName, Integer month, Integer year, String comment) {
-		StringBuilder diaRequestUrl = new StringBuilder(properties.diaUrl + DIA_SUBMISSION_ENDPOINT);
+		StringBuilder diaRequestUrl = new StringBuilder(properties.diaRootUrl + DIA_SUBMISSION_ENDPOINT);
 		diaRequestUrl.append("?name=").append(reportName).append("&month=").append(month).append("&year=").append(year)
 				.append("&isImam=false&isFamily=false").append("&comment=").append(comment);
 		return diaRequestUrl.toString();
@@ -73,6 +67,7 @@ public class DHIS2Scheduler {
 
 		String diaUrl = buildDiaUrl(reportName, month, year, comment);
 		String openmrsUrl = properties.openmrsRootUrl + OPENMRS_LOGIN_ENDPOINT;
+		System.out.println("DIA url: " + diaUrl);
 
 		/*
 		 * JSONObject jsonObject = new JSONObject();

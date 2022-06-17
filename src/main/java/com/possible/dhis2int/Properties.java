@@ -24,6 +24,9 @@ public class Properties {
 	@Value("${dhis.url}")
 	public String dhisUrl;
 
+	@Value("${dia.root.url}")
+	public String diaRootUrl;
+
 	@Value("${openmrs.db.url}")
 	public String openmrsDBUrl;
 

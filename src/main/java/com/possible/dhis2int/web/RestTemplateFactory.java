@@ -9,17 +9,26 @@ import com.possible.dhis2int.Properties;
 
 @Component
 public class RestTemplateFactory {
-	
+
 	private final Properties properties;
-	
+
 	@Autowired
 	public RestTemplateFactory(Properties properties) {
 		this.properties = properties;
 	}
-	
+
 	public RestTemplate getRestTemplate() {
 		RestTemplate restTemplate = new RestTemplate();
-		restTemplate.getInterceptors().add(new BasicAuthorizationInterceptor(properties.dhisUser, properties.dhisPassword));
+		restTemplate.getInterceptors()
+				.add(new BasicAuthorizationInterceptor(properties.dhisUser, properties.dhisPassword));
+		return restTemplate;
+	}
+
+	public RestTemplate geRestTemplateCustom() {
+		RestTemplate restTemplate = new RestTemplate();
+		String username = "superman";
+		String password = "P@$$w0rd!";
+		restTemplate.getInterceptors().add(new BasicAuthorizationInterceptor(username, password));
 		return restTemplate;
 	}
 }

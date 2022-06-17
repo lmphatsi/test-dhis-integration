@@ -11,7 +11,7 @@ daemon.user: user
 daemon.password: password
 
 #dhis2 integration app host
-dia.host: http://localhost
+dia.url: http://localhost
 
 openmrs.db.url: jdbc:mysql://localhost.localdomain/openmrs?user=root&password=password
 openelis.db.url: jdbc:mysql://localhost.localdomain/openmrs?user=dbuser&password=dbpassword

@@ -7,17 +7,17 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
 public class Cookies {
-	
+
 	public final static String BAHMNI_USER = "bahmni.user";
-	
+
 	public final static String DHIS_INTEGRATION_COOKIE_NAME = "reporting_session";
-	
+
 	private final Cookie[] cookies;
-	
+
 	public Cookies(HttpServletRequest request) {
 		this.cookies = request.getCookies();
 	}
-	
+
 	public String getValue(Object key) {
 		if (cookies == null) {
 			return null;
@@ -26,12 +26,22 @@ public class Cookies {
 			if (cookie.getName().equals(key)) {
 				try {
 					return URLDecoder.decode(cookie.getValue(), "UTF-8");
-				}
-				catch (UnsupportedEncodingException e) {
+				} catch (UnsupportedEncodingException e) {
 					return cookie.getValue();
 				}
 			}
 		}
 		return null;
+	}
+
+	public String getAll() {
+		String result = "";
+		if (cookies == null) {
+			return result;
+		}
+		for (Cookie cookie : cookies) {
+			result = result + "CookieValue: " + (cookie.getValue()) + "\n";
+		}
+		return result;
 	}
 }

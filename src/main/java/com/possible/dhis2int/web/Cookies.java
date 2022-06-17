@@ -34,7 +34,7 @@ public class Cookies {
 		return null;
 	}
 
-	public String getAll() {
+	public String getAllCookieValues() {
 		String result = "";
 		if (cookies == null) {
 			return result;

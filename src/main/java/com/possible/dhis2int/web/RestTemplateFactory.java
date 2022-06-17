@@ -23,12 +23,4 @@ public class RestTemplateFactory {
 				.add(new BasicAuthorizationInterceptor(properties.dhisUser, properties.dhisPassword));
 		return restTemplate;
 	}
-
-	public RestTemplate geRestTemplateCustom() {
-		RestTemplate restTemplate = new RestTemplate();
-		String username = "superman";
-		String password = "P@$$w0rd!";
-		restTemplate.getInterceptors().add(new BasicAuthorizationInterceptor(username, password));
-		return restTemplate;
-	}
 }

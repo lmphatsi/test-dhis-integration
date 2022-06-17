@@ -115,32 +115,19 @@ public class DHIS2Scheduler {
 		HttpEntity<String> entity = new HttpEntity<>(jsonObject.toString(), headers);
 
 		try {
-			/* Working */
-			/*
-			 * HttpEntity<String> entity1 = new HttpEntity<>("body", headers);
-			 * String urlEndpoint =
-			 * "http://localhost/dhis-integration/submit-to-dhis?name=TESTS-01 DHIS Integration App Sync Test&month=6&year=2014&comment='Ola'&isImam=false&isFamily=false"
-			 * ;
-			 * ResponseEntity<String> responseEntity = new
-			 * RestTemplate().exchange(urlEndpoint, HttpMethod.POST, entity1,
-			 * String.class);
-			 */
+
+			HttpEntity<String> entity1 = new HttpEntity<>("body", headers);
+			String urlEndpoint = "http://localhost/dhis-integration/submit-to-dhis?name=TESTS-01 DHIS Integration App Sync Test&month=6&year=2014&comment='Ola'&isImam=false&isFamily=false";
+			ResponseEntity<String> responseEntity = new RestTemplate().exchange(urlEndpoint, HttpMethod.POST, entity1,
+					String.class);
+			logger.info("responseEntity: " + responseEntity.toString());
 
 			/*
-			 * Working ResponseEntity<String> responseEntity = new
+			 * ResponseEntity<String> responseEntity = new
 			 * RestTemplate().exchange(dhisIntegrationUrl + endpointUrl,
 			 * HttpMethod.POST, entity, String.class);
 			 * logger.info("responseEntity: " + responseEntity.toString());
 			 */
-
-			HttpHeaders headerss = new HttpHeaders();
-			headers.setContentType(MediaType.APPLICATION_JSON);
-			HttpEntity<String> entitys = new HttpEntity<>(new JSONObject().toString(), headerss);
-			// System.out.println(properties.dhisUrl + url);
-			ResponseEntity<String> responseEntitys = restTemplateFactory.geRestTemplateCustom().exchange(
-					dhisIntegrationUrl + endpointUrl, HttpMethod.GET, entitys,
-					String.class);
-			System.out.println("Response Entity ----- " + responseEntitys.toString());
 
 			/*
 			 * Map<String, Integer> vars = new HashMap<String, Integer>();

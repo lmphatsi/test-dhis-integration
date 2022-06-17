@@ -39,10 +39,13 @@ public class DHIS2Scheduler {
 
 	private final Properties properties;
 
+	private RestTemplateFactory restTemplateFactory;
+
 	@Autowired
-	DHIS2Scheduler(Properties properties, OpenMRSAuthenticator authenticator) {
+	DHIS2Scheduler(Properties properties, OpenMRSAuthenticator authenticator, RestTemplateFactory restTemplateFactory) {
 		this.properties = properties;
 		this.authenticator = authenticator;
+		this.restTemplateFactory = restTemplateFactory;
 	}
 
 	private void submitToDHIS(String programmeName, Integer year, Integer month) {
@@ -123,9 +126,21 @@ public class DHIS2Scheduler {
 			 * String.class);
 			 */
 
-			ResponseEntity<String> responseEntity = new RestTemplate().exchange(dhisIntegrationUrl + endpointUrl,
-					HttpMethod.POST, entity, String.class);
-			logger.info("responseEntity: " + responseEntity.toString());
+			/*
+			 * Working ResponseEntity<String> responseEntity = new
+			 * RestTemplate().exchange(dhisIntegrationUrl + endpointUrl,
+			 * HttpMethod.POST, entity, String.class);
+			 * logger.info("responseEntity: " + responseEntity.toString());
+			 */
+
+			HttpHeaders headerss = new HttpHeaders();
+			headers.setContentType(MediaType.APPLICATION_JSON);
+			HttpEntity<String> entitys = new HttpEntity<>(new JSONObject().toString(), headerss);
+			// System.out.println(properties.dhisUrl + url);
+			ResponseEntity<String> responseEntitys = restTemplateFactory.geRestTemplateCustom().exchange(
+					dhisIntegrationUrl + endpointUrl, HttpMethod.GET, entitys,
+					String.class);
+			System.out.println("Response Entity ----- " + responseEntitys.toString());
 
 			/*
 			 * Map<String, Integer> vars = new HashMap<String, Integer>();

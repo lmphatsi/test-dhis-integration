@@ -74,12 +74,22 @@ public class DHIS2Scheduler {
 		return authResponse;
 	}
 
+	private void logout(String openmrsUrl) {
+		String authToken = getAuthToken(properties.openmrsDaemonUser, properties.openmrsDaemonPassword);
+
+		HttpHeaders openmrsAuthHeaders = new HttpHeaders();
+		openmrsAuthHeaders.add("Authorization", "BASIC " + authToken);
+
+		ResponseEntity<String> responseEntity = new RestTemplate().exchange(openmrsUrl,
+				HttpMethod.DELETE, new HttpEntity<String>(openmrsAuthHeaders), String.class);
+		logger.info("Openmrs delete session response: " + responseEntity.toString());
+	}
+
 	private ResponseEntity<String> submitToDIA(String diaUrl, AuthResponse authResponse) {
 		HttpHeaders diaAuthHeaders = new HttpHeaders();
 		diaAuthHeaders.add("Cookie", "JSESSIONID=" + authResponse.getSessionId());
 		diaAuthHeaders.add("Cookie", "reporting_session=" + authResponse.getSessionId());
 		diaAuthHeaders.add("Cookie", "bahmni.user=" + authResponse.getSessionUser());
-		// HttpEntity<String> entity1 = new HttpEntity<>("body", diaAuthHeaders);
 
 		ResponseEntity<String> responseEntity = new RestTemplate().exchange(diaUrl, HttpMethod.GET,
 				new HttpEntity<String>(diaAuthHeaders),
@@ -96,6 +106,10 @@ public class DHIS2Scheduler {
 		// if due => call submitToDHIS(x,y,z)
 		logger.info("Executing schedule at :" + new Date().toString());
 
+		// check if dhis-instance is up
+
+		// get from DB
+
 		Integer month = 6;
 		Integer year = 2020;
 		String reportName = "TESTS-01 DHIS Integration App Sync Test";
@@ -107,9 +121,12 @@ public class DHIS2Scheduler {
 
 		AuthResponse authResponse = authenticate(openmrsUrl);
 
+		//
 		if (authResponse.getSessionId() != "") {
 			submitToDIA(diaUrl, authResponse);
 		}
+		logout(openmrsUrl);
+		// logout when done
 
 		/*
 		 * JSONObject jsonObject = new JSONObject();

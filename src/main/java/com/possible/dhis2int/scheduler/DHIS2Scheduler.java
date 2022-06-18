@@ -86,18 +86,19 @@ public class DHIS2Scheduler {
 
 		String sessionId = "";
 		String sessionUser = "";
-
+		System.out.println("Auth token: " + authToken);
 		// Get openmrs jsessionid
 		try {
 			HttpHeaders openmrsAuthHeaders = new HttpHeaders();
 			openmrsAuthHeaders.add("Authorization", "BASIC " + authToken);
 			ResponseEntity<String> responseEntity1 = new RestTemplate().exchange(openmrsUrl,
 					HttpMethod.GET, new HttpEntity<String>(openmrsAuthHeaders), String.class);
-			// logger.info("Openmrs get session response: " + responseEntity1.toString());
-			// logger.info("Response headers: " + responseEntity1.getHeaders().toString());
-			sessionId = new JSONObject(new JSONTokener(responseEntity1.getBody())).getString("sessionId");
-			sessionUser = new JSONObject(new JSONTokener(responseEntity1.getBody())).getJSONObject("user")
-					.getString("username");
+			logger.info("Openmrs get session response: " + responseEntity1.toString());
+			logger.info("Response headers: " + responseEntity1.getHeaders().toString());
+			// sessionId = new JSONObject(new
+			// JSONTokener(responseEntity1.getBody())).getString("sessionId");
+			// sessionUser = new JSONObject(new
+			// JSONTokener(responseEntity1.getBody())).getJSONObject("user").getString("username");
 
 			// authHeaders.add("Cookie", "JSESSIONID=" + sessionId);
 			// responseEntity1 = new RestTemplate().exchange(openmrsWhoAmIEndpoint,
@@ -124,7 +125,7 @@ public class DHIS2Scheduler {
 			// HttpEntity<String> entity1 = new HttpEntity<>("body", diaAuthHeaders);
 
 			ResponseEntity<String> responseEntity = new RestTemplate().exchange(diaUrl, HttpMethod.POST,
-					new HttpEntity<String>("", diaAuthHeaders),
+					new HttpEntity<String>(diaAuthHeaders),
 					String.class);
 			logger.info("responseEntity: " + responseEntity.toString());
 

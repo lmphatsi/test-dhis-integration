@@ -5,17 +5,13 @@ import org.json.JSONTokener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Base64Utils;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import com.possible.dhis2int.Properties;
@@ -53,6 +49,46 @@ public class DHIS2Scheduler {
 		return diaRequestUrl.toString();
 	}
 
+	private AuthResponse authenticate(String openmrsUrl) {
+		String authToken = getAuthToken(properties.openmrsDaemonUser, properties.openmrsDaemonPassword);
+
+		HttpHeaders openmrsAuthHeaders = new HttpHeaders();
+		openmrsAuthHeaders.add("Authorization", "BASIC " + authToken);
+
+		ResponseEntity<String> responseEntity = new RestTemplate().exchange(openmrsUrl,
+				HttpMethod.GET, new HttpEntity<String>(openmrsAuthHeaders), String.class);
+		logger.info("Openmrs get session response: " + responseEntity.toString());
+		logger.info("Response headers: " + responseEntity.getHeaders().toString());
+		Boolean authenticated = new JSONObject(new JSONTokener(responseEntity.getBody()))
+				.getBoolean("authenticated");
+		AuthResponse authResponse = new AuthResponse("", "");
+		if (authenticated) {
+			authResponse.setSessionId(new JSONObject(new JSONTokener(responseEntity.getBody())).getString("sessionId"));
+			authResponse.setSessionUser(new JSONObject(new JSONTokener(responseEntity.getBody())).getJSONObject("user")
+					.getString("username"));
+			logger.info("Daemon user " + properties.openmrsDaemonUser + " autheticated successfully");
+		} else {
+			logger.warn("Daemon user " + properties.openmrsDaemonUser
+					+ " NOT autheticated. Correct the credentials on the properties file (application.yml)");
+		}
+		return authResponse;
+	}
+
+	private ResponseEntity<String> submitToDIA(String diaUrl, AuthResponse authResponse) {
+		HttpHeaders diaAuthHeaders = new HttpHeaders();
+		diaAuthHeaders.add("Cookie", "JSESSIONID=" + authResponse.getSessionId());
+		diaAuthHeaders.add("Cookie", "reporting_session=" + authResponse.getSessionId());
+		diaAuthHeaders.add("Cookie", "bahmni.user=" + authResponse.getSessionUser());
+		// HttpEntity<String> entity1 = new HttpEntity<>("body", diaAuthHeaders);
+
+		ResponseEntity<String> responseEntity = new RestTemplate().exchange(diaUrl, HttpMethod.GET,
+				new HttpEntity<String>(diaAuthHeaders),
+				String.class);
+
+		logger.info("Status code: " + responseEntity.getStatusCode() + "when firing query - GET: " + diaUrl);
+		return responseEntity;
+	}
+
 	@Scheduled(fixedDelay = 30000)
 	public void processSchedules() {
 		// read from table
@@ -69,6 +105,12 @@ public class DHIS2Scheduler {
 		String openmrsUrl = properties.openmrsRootUrl + OPENMRS_LOGIN_ENDPOINT;
 		System.out.println("DIA url: " + diaUrl);
 
+		AuthResponse authResponse = authenticate(openmrsUrl);
+
+		if (authResponse.getSessionId() != "") {
+			submitToDIA(diaUrl, authResponse);
+		}
+
 		/*
 		 * JSONObject jsonObject = new JSONObject();
 		 * jsonObject.put("name", reportName);
@@ -78,84 +120,94 @@ public class DHIS2Scheduler {
 		 * jsonObject.put("isImam", isImam);
 		 */
 
-		String authToken = getAuthToken(properties.openmrsDaemonUser, properties.openmrsDaemonPassword);
+		// String authToken = getAuthToken(properties.openmrsDaemonUser,
+		// properties.openmrsDaemonPassword);
 
 		// String openmrsLoginEndpoint = "http://localhost/openmrs/ws/rest/v1/session";
 		// String openmrsWhoAmIEndpoint =
 		// "http://localhost/openmrs/ws/rest/v1/bahmnicore/whoami";
 
-		String sessionId = "";
-		String sessionUser = "";
-		System.out.println("Auth token: " + authToken);
-		// Get openmrs jsessionid
-		try {
-			HttpHeaders openmrsAuthHeaders = new HttpHeaders();
-			openmrsAuthHeaders.add("Authorization", "BASIC " + authToken);
-			ResponseEntity<String> responseEntity1 = new RestTemplate().exchange(openmrsUrl,
-					HttpMethod.GET, new HttpEntity<String>(openmrsAuthHeaders), String.class);
-			logger.info("Openmrs get session response: " + responseEntity1.toString());
-			logger.info("Response headers: " + responseEntity1.getHeaders().toString());
-			Boolean authenticated = new JSONObject(new JSONTokener(responseEntity1.getBody()))
-					.getBoolean("authenticated");
-			if (authenticated) {
-				System.out.println("Authenticated ================================");
-				sessionId = new JSONObject(new JSONTokener(responseEntity1.getBody())).getString("sessionId");
-				sessionUser = new JSONObject(new JSONTokener(responseEntity1.getBody())).getJSONObject("user")
-						.getString("username");
-			}
-			// sessionId = new JSONObject(new
-			// JSONTokener(responseEntity1.getBody())).getString("sessionId");
-			// sessionUser = new JSONObject(new
-			// JSONTokener(responseEntity1.getBody())).getJSONObject("user").getString("username");
+		/*
+		 * String sessionId = "";
+		 * String sessionUser = "";
+		 * System.out.println("Auth token: " + authToken);
+		 * // Get openmrs jsessionid
+		 * try {
+		 * HttpHeaders openmrsAuthHeaders = new HttpHeaders();
+		 * openmrsAuthHeaders.add("Authorization", "BASIC " + authToken);
+		 * ResponseEntity<String> responseEntity1 = new
+		 * RestTemplate().exchange(openmrsUrl,
+		 * HttpMethod.GET, new HttpEntity<String>(openmrsAuthHeaders), String.class);
+		 * logger.info("Openmrs get session response: " + responseEntity1.toString());
+		 * logger.info("Response headers: " + responseEntity1.getHeaders().toString());
+		 * Boolean authenticated = new JSONObject(new
+		 * JSONTokener(responseEntity1.getBody()))
+		 * .getBoolean("authenticated");
+		 * if (authenticated) {
+		 * sessionId = new JSONObject(new
+		 * JSONTokener(responseEntity1.getBody())).getString("sessionId");
+		 * sessionUser = new JSONObject(new
+		 * JSONTokener(responseEntity1.getBody())).getJSONObject("user")
+		 * .getString("username");
+		 * }
+		 * // sessionId = new JSONObject(new
+		 * // JSONTokener(responseEntity1.getBody())).getString("sessionId");
+		 * // sessionUser = new JSONObject(new
+		 * // JSONTokener(responseEntity1.getBody())).getJSONObject("user").getString(
+		 * "username");
+		 * 
+		 * // authHeaders.add("Cookie", "JSESSIONID=" + sessionId);
+		 * // responseEntity1 = new RestTemplate().exchange(openmrsWhoAmIEndpoint,
+		 * // HttpMethod.GET,new HttpEntity<String>(authHeaders), String.class);
+		 * // logger.info("session id: " + sessionId);
+		 * // -- logger.info("Response headers: " +
+		 * // responseEntity1.getHeaders().toString());
+		 * } catch (HttpClientErrorException exception) {
+		 * logger.warn("API call to OpenMRS failed.", exception.getStatusCode());
+		 * }
+		 * 
+		 * // System.out.println("Session ID " + sessionId);
+		 * // HttpHeaders diaAuthHeaders = new HttpHeaders();
+		 * // headers.add("Cookie", "JSESSIONID=" + sessionId);
+		 * // diaAuthHeaders.add("Cookie", "reporting_session=" + sessionId);
+		 * // diaAuthHeaders.add("Cookie", "bahmni.user=" + sessionUser);
+		 * // headers.setContentType(MediaType.APPLICATION_JSON);
+		 * // HttpEntity<String> entity = new HttpEntity<>(jsonObject.toString(),
+		 * headers);
+		 * 
+		 * try {
+		 * HttpHeaders diaAuthHeaders = new HttpHeaders();
+		 * diaAuthHeaders.add("Cookie", "JSESSIONID=" + sessionId);
+		 * diaAuthHeaders.add("Cookie", "reporting_session=" + sessionId);
+		 * diaAuthHeaders.add("Cookie", "bahmni.user=" + sessionUser);
+		 * // HttpEntity<String> entity1 = new HttpEntity<>("body", diaAuthHeaders);
+		 * 
+		 * ResponseEntity<String> responseEntity = new RestTemplate().exchange(diaUrl,
+		 * HttpMethod.GET,
+		 * new HttpEntity<String>(diaAuthHeaders),
+		 * String.class);
+		 * logger.info("responseEntity: " + responseEntity.toString());
+		 * 
+		 * /*
+		 * ResponseEntity<String> responseEntity = new
+		 * RestTemplate().exchange(dhisIntegrationUrl + endpointUrl,
+		 * HttpMethod.POST, entity, String.class);
+		 * logger.info("responseEntity: " + responseEntity.toString());
+		 */
 
-			// authHeaders.add("Cookie", "JSESSIONID=" + sessionId);
-			// responseEntity1 = new RestTemplate().exchange(openmrsWhoAmIEndpoint,
-			// HttpMethod.GET,new HttpEntity<String>(authHeaders), String.class);
-			// logger.info("session id: " + sessionId);
-			// -- logger.info("Response headers: " +
-			// responseEntity1.getHeaders().toString());
-		} catch (HttpClientErrorException exception) {
-			logger.warn("API call to OpenMRS failed.", exception.getStatusCode());
-		}
+		/*
+		 * Map<String, Integer> vars = new HashMap<String, Integer>();
+		 * vars.put("year", 2016);
+		 * vars.put("month", 1);
+		 * String result = new RestTemplate().getForObject(urlEndpoint, String.class,
+		 * vars);
+		 * logger.info("result: " + result);
+		 */
 
-		// System.out.println("Session ID " + sessionId);
-		// HttpHeaders diaAuthHeaders = new HttpHeaders();
-		// headers.add("Cookie", "JSESSIONID=" + sessionId);
-		// diaAuthHeaders.add("Cookie", "reporting_session=" + sessionId);
-		// diaAuthHeaders.add("Cookie", "bahmni.user=" + sessionUser);
-		// headers.setContentType(MediaType.APPLICATION_JSON);
-		// HttpEntity<String> entity = new HttpEntity<>(jsonObject.toString(), headers);
-
-		try {
-			HttpHeaders diaAuthHeaders = new HttpHeaders();
-			diaAuthHeaders.add("Cookie", "JSESSIONID=" + sessionId);
-			diaAuthHeaders.add("Cookie", "reporting_session=" + sessionId);
-			diaAuthHeaders.add("Cookie", "bahmni.user=" + sessionUser);
-			// HttpEntity<String> entity1 = new HttpEntity<>("body", diaAuthHeaders);
-
-			ResponseEntity<String> responseEntity = new RestTemplate().exchange(diaUrl, HttpMethod.GET,
-					new HttpEntity<String>(diaAuthHeaders),
-					String.class);
-			logger.info("responseEntity: " + responseEntity.toString());
-
-			/*
-			 * ResponseEntity<String> responseEntity = new
-			 * RestTemplate().exchange(dhisIntegrationUrl + endpointUrl,
-			 * HttpMethod.POST, entity, String.class);
-			 * logger.info("responseEntity: " + responseEntity.toString());
-			 */
-
-			/*
-			 * Map<String, Integer> vars = new HashMap<String, Integer>();
-			 * vars.put("year", 2016);
-			 * vars.put("month", 1);
-			 * String result = new RestTemplate().getForObject(urlEndpoint, String.class,
-			 * vars);
-			 * logger.info("result: " + result);
-			 */
-
-		} catch (HttpClientErrorException exception) {
-			logger.warn("API call to DIA failed.", exception.getStatusCode());
-		}
+		/*
+		 * } catch (HttpClientErrorException exception) {
+		 * logger.warn("API call to DIA failed.", exception.getStatusCode());
+		 * }
+		 */
 	}
 }

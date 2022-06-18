@@ -29,7 +29,7 @@ public class OpenmrsClient {
 
 		requestHeaders.add("Cookie", OpenMRSAuthenticator.OPENMRS_SESSION_ID_COOKIE_NAME + "=" + sessionId);
 		// tracing
-		logger.info("RequestHeader: " + requestHeaders.toString());
+		// logger.info("RequestHeader: " + requestHeaders.toString());
 		try {
 			return new RestTemplate()
 					.exchange(properties.openmrsRootUrl + url,

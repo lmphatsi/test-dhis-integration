@@ -95,6 +95,14 @@ public class DHIS2Scheduler {
 					HttpMethod.GET, new HttpEntity<String>(openmrsAuthHeaders), String.class);
 			logger.info("Openmrs get session response: " + responseEntity1.toString());
 			logger.info("Response headers: " + responseEntity1.getHeaders().toString());
+			Boolean authenticated = new JSONObject(new JSONTokener(responseEntity1.getBody()))
+					.getString("authenticated").contentEquals("true");
+			if (authenticated) {
+				System.out.println("Authenticated ================================");
+				sessionId = new JSONObject(new JSONTokener(responseEntity1.getBody())).getString("sessionId");
+				sessionUser = new JSONObject(new JSONTokener(responseEntity1.getBody())).getJSONObject("user")
+						.getString("username");
+			}
 			// sessionId = new JSONObject(new
 			// JSONTokener(responseEntity1.getBody())).getString("sessionId");
 			// sessionUser = new JSONObject(new
@@ -107,7 +115,7 @@ public class DHIS2Scheduler {
 			// -- logger.info("Response headers: " +
 			// responseEntity1.getHeaders().toString());
 		} catch (HttpClientErrorException exception) {
-			logger.warn("Could not authenticate with OpenMRS.", exception.getStatusCode());
+			logger.warn("API call to OpenMRS failed.", exception.getStatusCode());
 		}
 
 		// System.out.println("Session ID " + sessionId);

@@ -96,7 +96,7 @@ public class DHIS2Scheduler {
 			logger.info("Openmrs get session response: " + responseEntity1.toString());
 			logger.info("Response headers: " + responseEntity1.getHeaders().toString());
 			Boolean authenticated = new JSONObject(new JSONTokener(responseEntity1.getBody()))
-					.getString("authenticated").contentEquals("true");
+					.getBoolean("authenticated");
 			if (authenticated) {
 				System.out.println("Authenticated ================================");
 				sessionId = new JSONObject(new JSONTokener(responseEntity1.getBody())).getString("sessionId");
@@ -128,11 +128,12 @@ public class DHIS2Scheduler {
 
 		try {
 			HttpHeaders diaAuthHeaders = new HttpHeaders();
+			diaAuthHeaders.add("Cookie", "JSESSIONID=" + sessionId);
 			diaAuthHeaders.add("Cookie", "reporting_session=" + sessionId);
 			diaAuthHeaders.add("Cookie", "bahmni.user=" + sessionUser);
 			// HttpEntity<String> entity1 = new HttpEntity<>("body", diaAuthHeaders);
 
-			ResponseEntity<String> responseEntity = new RestTemplate().exchange(diaUrl, HttpMethod.POST,
+			ResponseEntity<String> responseEntity = new RestTemplate().exchange(diaUrl, HttpMethod.GET,
 					new HttpEntity<String>(diaAuthHeaders),
 					String.class);
 			logger.info("responseEntity: " + responseEntity.toString());
